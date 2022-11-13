@@ -1,0 +1,320 @@
+openapi: 3.0.0
+info:
+  title: GraphQL API Specification in OpenAPI 3.0.0 format.
+  description: "Generically specifies GraphQL GET and POST 'endpoints' in an OpenAPI form. This is a standard base that some servers may extend further."
+  version: 1.0.0
+paths:
+  /graphql: # This may vary from API to API
+    get:
+      summary: Executes side-effect-free (read-only) GraphQL queries (only).
+      responses:
+        "200":
+          description: "Request was sufficiently valid to attempt execution."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GraphQLResponse"
+        "202": 
+          description: "Standard HTTP `Accepted` response code indicating that the request was received but acted upon yet."
+        "301": 
+          description: "Standard HTTP `Moved Permanently` response code. The API endpoint has moved to a new location."
+        "302":
+          description: "Standard HTTP `Found` response code. The API endpoint has changed temporarily to the provided URL. Original URL should continue to be used long term."
+        "303": 
+          description: "Standard HTTP `See Other` response code. The client should access the API at the specified location."
+        "304": 
+          description: "Standard HTTP `Not Modified` response code. Unlikely but possible with specific GraphQL servers that can preprocess queries and detect that they would not respond with new data."
+        "307":
+          description: "Standard HTTP `Temporary Redirect` response code. Same as `302` but the HTTP method must remain the same."
+        "308":
+          description: "Standard HTTP `Permanent Redirect` response code. Same as `301` but the HTTP method must remain the same."
+        "400":
+          description: "Standard HTTP `Bad Request` response code. Request is malformed enough to prevent any GraphQL processing.       "
+        "401":
+          description: "Standard HTTP `Unauthorized` response code. The server requres authentication."
+        "403":
+          description: "Standard HTTP `Forbidden` response code. Authenticated client is forbidden to access this API at all."
+        "404":
+          description: "Standard HTTP `Not Found` response code. This endpoint is either no longer supported at this server or the server is pretending so to hide the API availability from unauthorized users."
+        "406":
+          description: "Standard HTTP `Not Acceptable` response code. Content negotiation failed."
+        "407":
+          description: "Standard HTTP `Proxy Authentication Required` response code. Like `401` but it is the proxy that needs to authenticate."
+        "408":
+          description: "Standard HTTP `Request Timeout` response code. Client's request (connection) was idle for too long."
+        "410":
+          description: "Standard HTTP `Gone` response code. This API is no longer here."
+        "411":
+          description: "Standard HTTP `Length Required` response code. `Content-Length` header is required by the server but not present."
+        "412":
+          description: "Standard HTTP `Precondition Failed` response code. Server does not meet client-specified preconditions."
+        "413":
+          description: "Standard HTTP `Payload Too Large` response code. The server refuses to accept the request this large, possibly due to security considerations."
+        "414":
+          description: "Standard HTTP `URI Too Long` response code. The server refuses to accept the request this large, possibly due to security considerations."
+        "415":
+          description: "Standard HTTP `Unsupported Media Type` response code. Requested media type is not supported."
+        "417":
+          description: "Standard HTTP `Expectation Failed` response code. Client expectations cannot be met."
+        "418":
+          description: "`I'm a teapot` response code. This GraphQL teapot does not brew coffee or other whatever other beverage was requested."
+        "425":
+          description: "Incubating HTTP `Too Early` response code. Server refuses to execute a request that may be replayed."
+        "426":
+          description: "Standard HTTP `Upgrade Required` response code. Server requires the client to upgrade the protocol for contiued service."
+        "429":
+          description: "Standard HTTP `Too Many Requests` response code. Request violates the set rate limit."
+        "431":
+          description: "Standard HTTP `Request Header Fields Too Large` response code. Server refuses to serve the request due to the size of request headers."
+        "451":
+          description: "Standard HTTP `Unavailable For Legal Reasons` response code. The server is not legally permitted to handle this request."
+        "500":
+          description: "Standard HTTP `Internal Server Error` response code. Server could not handle the request due to internal errors."
+        "501":
+          description: "Standard HTTP `Not Implemented` response code. Server does not implement support for this HTTP method."
+        "502":
+          description: "Standard HTTP `Bad Gateway` response code. Server working as a gateway encountered an error."
+        "503":
+          description: "Standard HTTP `Service Unavailable` response code. Server is not ready (yet)."
+        "504":
+          description: "Standard HTTP `Gateway Timeout` response code. Server working as a gateway faced a timeout."
+        "505":
+          description: "Standard HTTP `HTTP Version Not Supported` response code. Server does not support the HTTP version used in the request."
+        "506":
+          description: "Standard HTTP `Variant Also Negotiates` response code. Internal server configuration error."
+        "510":
+          description: "Standard HTTP `Not Extended` response code. This particular server requires further request extensions before responding."
+        "511":
+          description: "Standard HTTP `Network Authentication Required` response code. Client needs to authenticate."
+      parameters:
+        - in: query
+          name: query
+          description: "GraphQL query"
+          required: true
+          schema:
+            type: string
+            example: "query Pets($species: Species) { available: pets(species: $species availableOnly: true) { __typename id name } }"
+        - in: query
+          name: variables
+          description: "GraphQL variables"
+          required: false
+          schema:
+            type: string
+            example: "{species:\"CAT\"}"
+        - in: query
+          name: operationName
+          required: false
+          description: Can be used to specify which of multiple named operations to execute.
+          schema:
+            type: string
+            example: Pets
+    post:
+      summary: Executes any number of any GraphQL operations - query, mutation or subscription, with or without side-effects.
+      responses:
+        "100": 
+          description: "Standard HTTP `Continue` response code. The client should continue with the request or ignore it if finished."
+        "101": 
+          description: "Standard HTTP `Switching Protocols` code sent in response to `Upgrade` request header."
+        "200":
+          description: "Request was sufficiently valid to attempt execution."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GraphQLResponse"
+        "202": 
+          description: "Standard HTTP `Accepted` response code indicating that the request was received but acted upon yet."
+        "301": 
+          description: "Standard HTTP `Moved Permanently` response code. The API endpoint has moved to a new location."
+        "302":
+          description: "Standard HTTP `Found` response code. The API endpoint has changed temporarily to the provided URL. Original URL should continue to be used long term."
+        "303": 
+          description: "Standard HTTP `See Other` response code. The client should access the API at the specified location."
+        "304": 
+          description: "Standard HTTP `Not Modified` response code. Unlikely but possible with specific GraphQL servers that can preprocess queries and detect that they would not respond with new data."
+        "307":
+          description: "Standard HTTP `Temporary Redirect` response code. Same as `302` but the HTTP method must remain the same."
+        "308":
+          description: "Standard HTTP `Permanent Redirect` response code. Same as `301` but the HTTP method must remain the same."
+        "400":
+          description: "Standard HTTP `Bad Request` response code. Request is malformed enough to prevent any GraphQL processing.       "
+        "401":
+          description: "Standard HTTP `Unauthorized` response code. The server requres authentication."
+        "403":
+          description: "Standard HTTP `Forbidden` response code. Authenticated client is forbidden to access this API at all."
+        "404":
+          description: "Standard HTTP `Not Found` response code. This endpoint is either no longer supported at this server or the server is pretending so to hide the API availability from unauthorized users."
+        "406":
+          description: "Standard HTTP `Not Acceptable` response code. Content negotiation failed."
+        "407":
+          description: "Standard HTTP `Proxy Authentication Required` response code. Like `401` but it is the proxy that needs to authenticate."
+        "408":
+          description: "Standard HTTP `Request Timeout` response code. Client's request (connection) was idle for too long."
+        "410":
+          description: "Standard HTTP `Gone` response code. This API is no longer here."
+        "411":
+          description: "Standard HTTP `Length Required` response code. `Content-Length` header is required by the server but not present."
+        "412":
+          description: "Standard HTTP `Precondition Failed` response code. Server does not meet client-specified preconditions."
+        "413":
+          description: "Standard HTTP `Payload Too Large` response code. The server refuses to accept the request this large, possibly due to security considerations."
+        "414":
+          description: "Standard HTTP `URI Too Long` response code. The server refuses to accept the request this large, possibly due to security considerations."
+        "415":
+          description: "Standard HTTP `Unsupported Media Type` response code. Requested media type is not supported."
+        "417":
+          description: "Standard HTTP `Expectation Failed` response code. Client expectations cannot be met."
+        "418":
+          description: "`I'm a teapot` response code. This GraphQL teapot does not brew coffee or other whatever other beverage was requested."
+        "425":
+          description: "Incubating HTTP `Too Early` response code. Server refuses to execute a request that may be replayed."
+        "426":
+          description: "Standard HTTP `Upgrade Required` response code. Server requires the client to upgrade the protocol for contiued service."
+        "429":
+          description: "Standard HTTP `Too Many Requests` response code. Request violates the set rate limit."
+        "431":
+          description: "Standard HTTP `Request Header Fields Too Large` response code. Server refuses to serve the request due to the size of request headers."
+        "451":
+          description: "Standard HTTP `Unavailable For Legal Reasons` response code. The server is not legally permitted to handle this request."
+        "500":
+          description: "Standard HTTP `Internal Server Error` response code. Server could not handle the request due to internal errors."
+        "501":
+          description: "Standard HTTP `Not Implemented` response code. Server does not implement support for this HTTP method."
+        "502":
+          description: "Standard HTTP `Bad Gateway` response code. Server working as a gateway encountered an error."
+        "503":
+          description: "Standard HTTP `Service Unavailable` response code. Server is not ready (yet)."
+        "504":
+          description: "Standard HTTP `Gateway Timeout` response code. Server working as a gateway faced a timeout."
+        "505":
+          description: "Standard HTTP `HTTP Version Not Supported` response code. Server does not support the HTTP version used in the request."
+        "506":
+          description: "Standard HTTP `Variant Also Negotiates` response code. Internal server configuration error."
+        "510":
+          description: "Standard HTTP `Not Extended` response code. This particular server requires further request extensions before responding."
+        "511":
+          description: "Standard HTTP `Network Authentication Required` response code. Client needs to authenticate."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GraphQLRequest"
+          application/graphql:
+            schema:
+              type: string
+              example: "{ available: pets(species: CAT availableOnly: true) { __typename id name } }"
+        description: "GraphQL request that may consist of multiple queries, mutations and subscriptions. Supports either an `application/json` request type or, if variables and other extensions are not needed, the request can be specified in its raw form as `application/graphql`. Not all servers may support the latter."
+        required: true
+# Uncomment to specify servers
+#servers:
+#  - url: http://localhost:8080/
+components:
+  schemas:
+    GraphQLRequest:
+      type: object
+      description: "A complete GraphQL request."
+      properties:
+        query:
+          description: "GraphQL request as a string. See https://graphql.org/learn for details. Example provided is not of any specific API, just an illustration."
+          type: string
+          example: "query Pets($species: Species) { available: pets(species: $species availableOnly: true) { __typename id name } }"
+        variables:
+          description: "Variables (parameters) to pass to the query."
+          type: object
+          example:
+            species: "CAT"
+        operationName:
+          description: Can be used to specify which of multiple named operations to execute.
+          type: string
+          example: Pets
+    GraphQLResponse:
+      type: object
+      properties:
+        data:
+          description: "Response to the query. Swagger/OpenAPI cannot fully express this as the query acts as a template and can rename and only optionally include any element (including those that would never be `null`), potentially multiple times, using different names."
+          type: object
+          example:
+            available:
+              -
+                __typename: "PetCat"
+                id: "a0b479a2-f208-4ff1-9ee4-56983401141e"
+                name: "Whiskers"
+              -
+                __typename: "PetCat"
+                id: "02d590af-f64d-4936-a83f-a64b2a67b37c"
+                name: "Fluffy"
+        errors:
+          description: "An array of individual errors (official, by the spec)."
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphQLError"
+        error:
+          type: array
+          description: "Some Apollo servers return errors this way"
+          items:
+            $ref: "#/components/schemas/GraphQLTopError"
+        extensions:
+          type: object
+          description: "Extended data beyond the GraphQL core standard."
+    GraphQLTopError:
+      type: object
+      description: "Top-level error response."
+      properties:
+        errors:
+          description: "An array of individual errors."
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphQLError"
+    GraphQLError:
+      type: object
+      description: "Singular GraphQL error"
+      properties:
+        message:
+          description: "Human-readable description of the error."
+          type: string
+        path:
+          description: "Query DOM path at which the error occurred."
+          type: array
+          items:
+            allOf:
+              - type: string
+              - type: integer
+        locations:
+          description: "Locations where the error occurs."
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphQLLocation"
+        extensions:
+          $ref: "#/components/schemas/GraphQLErrorExtensions"
+    GraphQLLocation:
+      type: object
+      description: "Location of an error"
+      properties:
+        line:
+          description: "Number of the line of the query at which the error occurred."
+          type: integer
+        column:
+          description: "Index of the character within the line at which the error occurred."
+          type: integer
+    GraphQLErrorExtensions:
+      type: object
+      description: "Common error extensions"
+      properties:
+        classification:
+          description: "Error classification code as per graphql-java based servers"
+          type: string
+        code:
+          description: "Error code as per Apollo GraphQL server"
+          type: string
+        exception:
+          description: "Exception details"
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphQLErrorExtensionsException"
+    GraphQLErrorExtensionsException:
+      type: object
+      description: "Exception details"
+      properties:
+        stacktrace:
+          type: array
+          items:
+            type: string
