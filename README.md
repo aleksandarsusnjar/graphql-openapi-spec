@@ -7,4 +7,4 @@ This specification is not required to use GraphQL APIs. GraphQL does a great job
 1. **Established legacy processes.** We sometimes face manual and/or automated governance processes left over from a distant past. These may require developers to supply Swagger or OpenAPI specifications before they can expose their APIs. 
 2. **Describing GraphQL.** People often assume scary things about GraphQL before they learn about it, including that it is more different than it is. They sometimes fear that their clients will have hard time accessing GraphQL but are perfectly comfortable with APIs that can be specified via OpenAPI specs. This specification here can be used to show them, in a language they understand, that GraphQL is friendly and may just be very similar to what they were thinking of themselves
 
-
+At this point this is not yet a reviewed, tested specification and should only be used as an illustration. Help is welcome.
